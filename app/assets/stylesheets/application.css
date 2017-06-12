@@ -13,7 +13,9 @@
  *= require_tree .
  * require_self
  */
-
+body{
+  background: lightgoldenrodyellow;
+}
 button {
   margin: 0 3px 10px 0;
   padding-left: 2px;
@@ -37,6 +39,7 @@ video#remoteVideo {
   height: 410px;
   width: 546px;
   margin: 0 12px 20px 0;
+  background: white;
 }
 
 video#localVideo {
@@ -45,7 +48,6 @@ video#localVideo {
   top: 328px;
   z-index: 2;
   left: 435px;
-
+  background: cornflowerblue;
 }
-
 

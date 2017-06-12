@@ -13,8 +13,5 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
+//= require_tree .
 
-// www.RTCMultiConnection.org/changes-log/
-//= require web_RTC/RTCMultiConnection
-//= require web_RTC/FileBufferReader
-//= require web_RTC/linkify
