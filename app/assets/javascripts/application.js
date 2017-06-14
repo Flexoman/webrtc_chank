@@ -13,5 +13,11 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require_tree .
+//= require toastr
+//= require cable
+
+//include adapter for srcObject shim
+//= require adapter-latest
+//= require peer_connection
+
 

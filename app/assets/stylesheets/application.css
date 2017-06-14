@@ -11,7 +11,8 @@
  * It is generally better to create a new file per style scope.
  *
  *= require_tree .
- * require_self
+ *= require_self
+ *= require toastr
  */
 body{
   background: lightgoldenrodyellow;
@@ -22,32 +23,28 @@ button {
   padding-right: 2px;
   width: 99px;
 }
+.input{
+  margin: 20px;
+}
 #actions{
-  top: 430px;
-  position: absolute;
+  margin: 20px;
 }
 
-p.borderBelow {
-  margin: 0 0 20px 0;
-  padding: 0 0 20px 0;
-}
 video{
-  position: absolute;
-  vertical-align: top;
+  display: block;
 }
 video#remoteVideo {
   height: 410px;
   width: 546px;
-  margin: 0 12px 20px 0;
+  margin: 0 12px 0 0;
   background: white;
 }
 
 video#localVideo {
   height: 90px;
   width: 119px;
-  top: 328px;
-  z-index: 2;
-  left: 435px;
+  margin-top: -90px;
+  margin-left: 427px;
   background: cornflowerblue;
 }
 

@@ -1,14 +1,16 @@
 
-<video id="localVideo" autoplay muted></video>
-<video id="remoteVideo" autoplay></video>
-
-<div id="actions">
-  <button id="startButton">Start</button>
-  <!-- <button id="callButton">Call</button> -->
-  <!-- <button id="hangupButton">Hang Up</button> -->
-  </div>
+<div>
+  <video id="remoteVideo" autoplay></video>
+  <video id="localVideo" autoplay></video>
+</div>
+<div class="input">
+  <label for="channel_val"> channel</label><br>
+  <input id="channel_val" value="101010101"></input>
 </div>
 
-
-<!-- include adapter for srcObject shim -->
-<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<div id="actions">
+  <button id="connectButton">Connect</button>
+  <!-- <button id="disconnectButton">Disconnect</button> -->
+  <button id="callButton" disabled>Call</button>
+  </div>
+</div>

@@ -9,7 +9,7 @@ class WebrtcSignalServer < ApplicationCable::Channel
     # $redis.hdel()
   end
 
-  def speak(data)
+  def signal(data)
     ActionCable.server.broadcast("channel-#{params[:channel_id]}", data)
   end
 
