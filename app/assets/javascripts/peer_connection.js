@@ -1,14 +1,18 @@
 'use strict';
+var userid = userid || getToken();
+var peers = {};
 
 var selfView,
     remoteView;
 
 var callButton,
+    call2Button,
     connectButton,
-    disconnectButton;
+    disconnectButton
 
 var SignalServer,
     localSteem;
+
 
 var connect_counter = 0;
 
@@ -16,10 +20,12 @@ $(document).ready(function() {
     selfView = document.getElementById('localVideo');
     remoteView = document.getElementById('remoteVideo');
     callButton = document.getElementById('callButton');
+    call2Button = document.getElementById('call2Button');
     connectButton = document.getElementById('connectButton');
     disconnectButton = document.getElementById('disconnectButton');
 
     callButton.onclick = function(){ start() }
+    call2Button.onclick = function(){ start2() }
     connectButton.onclick = function(){ connect() }
 })
 
@@ -36,7 +42,7 @@ function connect(){
         toastr.info('disconnected from channel: ' + channel_id)
       },
       received: function(data) {
-        console.log(data)
+        // console.log(data)
         onmessage(data)
       },
       signal: function(data = {}) {
@@ -53,6 +59,7 @@ function open_local_steem() {
            .then(function (stream) {
               selfView.srcObject = stream;
               localSteem = stream;
+              // console.log(stream.getVideoTracks()[0])
            }).catch(logError);
 }
 
@@ -74,15 +81,28 @@ var ICE_config = {
   ]
 }
 
-// var configuration = { "iceServers": [{ "urls": "stun:stun.example.org" }] };
-var pc;
+// var ICE_config = { "iceServers": [{ "urls": "stun:stun.example.org" }] };
+var pc,
+    pc2;
 
+function start2() {
+  pc2 = new RTCPeerConnection(ICE_config);
+  startConnect(pc2)
+}
 function start() {
-    pc = new RTCPeerConnection(ICE_config);
+  pc = new RTCPeerConnection(ICE_config);
+  startConnect(pc)
+}
+
+function startConnect(pc) {
 
     // send any ice candidates to the other peer
     pc.onicecandidate = function (evt) {
-        SignalServer.signal({ "candidate": evt.candidate })
+        SignalServer.signal({
+          userid: userid,
+          candidate: evt.candidate,
+          to: participant
+        })
     };
 
     // let the "negotiationneeded" event trigger offer generation
@@ -109,10 +129,7 @@ function start() {
     pc.addTrack(localSteem.getAudioTracks()[0], localSteem);
     pc.addTrack(localSteem.getVideoTracks()[0], localSteem);
 }
-
-
 function onmessage(data) {
-  // debugger
     if (!pc) {
       callButton.disabled = true
       start();
@@ -122,35 +139,52 @@ function onmessage(data) {
 
         // if we get an offer, we need to reply with an answer
         if (desc.type == "offer") {
-           connect_counter += 1
-           console.log('connect_counter', connect_counter)
 
             pc.setRemoteDescription(desc)
               .then(function () {
+                console.log('createAnswer')
                 return pc.createAnswer();
               })
               .then(function (answer) {
+                  console.log('answer',answer)
                   return pc.setLocalDescription(answer);
               })
               .then(function () {
                   SignalServer.signal({ "desc": pc.localDescription })
               })
-              .catch(logError);
+
+              // .catch(logError);
 
         } else if (desc.type == "answer") {
+           connect_counter += 1
+           // console.log('connect_counter', connect_counter)
             pc.setRemoteDescription(desc)
               .catch(logError);
         } else {
-            console.log("Unsupported SDP type. Your code may differ here.");
+            console.warn("Unsupported SDP type. Your code may differ here.");
         }
     } else{
-            pc.addIceCandidate(data.candidate)
-              .catch(logError);
+        pc.addIceCandidate(data.candidate)
+          .catch(logError);
     }
 };
 
+function closePeerConnections() {
+    self.stopBroadcasting = true;
+    if (localSteem) localSteem.stop();
+
+    for (var userid in peers) {
+        peers[userid].peer.close();
+    }
+    peers = {};
+}
+
+function getToken() {
+    return Math.round(Math.random() * 9999999999) + 9999999999;
+}
+
 function logError(error) {
-    console.error(error.name + ": " + error.message);
+    // console.error(error.name + ": " + error.message);
     // console.error(error);
     toastr.error(error.name + ": " + error.message)
     // console.error(error);

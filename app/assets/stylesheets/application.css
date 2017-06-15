@@ -40,6 +40,13 @@ video#remoteVideo {
   background: white;
 }
 
+video#remote2Video {
+  position: absolute;
+  background: #fff;
+  top: 10px;
+  left: 600px;
+}
+
 video#localVideo {
   height: 90px;
   width: 119px;

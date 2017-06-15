@@ -46,6 +46,12 @@ Rails.application.configure do
   config.assets.quiet = true
   config.action_cable.disable_request_forgery_protection = true
 
+  original_formatter = Logger::Formatter.new
+
+  config.log_formatter = proc do |severity, datetime, progname, msg|
+    message = msg.first(50)
+    original_formatter.call(severity, datetime, progname, message)
+  end
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 

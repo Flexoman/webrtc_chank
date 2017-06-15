@@ -5,17 +5,15 @@ $(document).ready(function() {
   /* globals MediaRecorder */
 
   var mediaSource = new MediaSource();
-  mediaSource.addEventListener('sourceopen', handleSourceOpen, false);
+      mediaSource.addEventListener('sourceopen', handleSourceOpen, false);
   var mediaRecorder;
   var recordedBlobs;
   var sourceBuffer;
 
-  var gumVideo = document.querySelector('video#gum');
-  var recordedVideo = document.querySelector('video#recorded');
-
-  var recordButton = document.querySelector('button#record');
-  var playButton = document.querySelector('button#play');
-  var downloadButton = document.querySelector('button#download');
+  var recordedVideo = document.getElementById('remote2Video');
+  var recordButton = document.getElementById('recordButton');
+  var playButton = document.getElementById('playButton');
+  var downloadButton = document.getElementById('downloadButton');
   recordButton.onclick = toggleRecording;
   playButton.onclick = play;
   downloadButton.onclick = download;
@@ -29,28 +27,10 @@ $(document).ready(function() {
     location.protocol = 'HTTPS';
   }
 
-  var constraints = {
-    audio: true,
-    video: true
-  };
-
-  function handleSuccess(stream) {
-    recordButton.disabled = false;
-    console.log('getUserMedia() got stream: ', stream);
-    window.stream = stream;
-    if (window.URL) {
-      gumVideo.src = window.URL.createObjectURL(stream);
-    } else {
-      gumVideo.src = stream;
-    }
-  }
 
   function handleError(error) {
     console.log('navigator.getUserMedia error: ', error);
   }
-
-  navigator.mediaDevices.getUserMedia(constraints).
-      then(handleSuccess).catch(handleError);
 
   function handleSourceOpen(event) {
     console.log('MediaSource opened');
@@ -101,7 +81,9 @@ $(document).ready(function() {
       }
     }
     try {
-      mediaRecorder = new MediaRecorder(window.stream, options);
+      if (!localSteem)
+        return console.error('localSteem not found');
+      mediaRecorder = new MediaRecorder(localSteem, options);
     } catch (e) {
       console.error('Exception while creating MediaRecorder: ' + e);
       alert('Exception while creating MediaRecorder: '
@@ -125,8 +107,27 @@ $(document).ready(function() {
   }
 
   function play() {
-    var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
-    recordedVideo.src = window.URL.createObjectURL(superBuffer);
+    // var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
+
+  var video = recordedVideo
+  var mediaSource = new MediaSource;
+  video.src = URL.createObjectURL(mediaSource);
+  mediaSource.addEventListener('sourceopen', sourceOpen)
+
+  var file = new File("http://localhost:3000/source/test.mp4");
+  debugger
+  function sourceOpen () {
+    var mediaSource = this;
+    var sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+    sourceBuffer.addEventListener('updateend', function () {
+      mediaSource.endOfStream();
+      video.play();
+    });
+    sourceBuffer.appendBuffer(buf); // buf is the arraybuffer to store the video data
+  };
+
+
+    // recordedVideo.src = window.URL.createObjectURL(superBuffer);
   }
 
   function download() {

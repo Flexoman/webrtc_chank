@@ -1,7 +1,8 @@
-
+<!--
 <div>
   <video id="remoteVideo" autoplay></video>
   <video id="localVideo" autoplay></video>
+  <video id="remote2Video"></video>
 </div>
 <div class="input">
   <label for="channel_val"> channel</label><br>
@@ -10,7 +11,25 @@
 
 <div id="actions">
   <button id="connectButton">Connect</button>
-  <!-- <button id="disconnectButton">Disconnect</button> -->
+  <button id="disconnectButton">Disconnect</button>
   <button id="callButton" disabled>Call</button>
+  <button id="call2Button">Call2</button>
   </div>
 </div>
+<div id="actions">
+  <button id="recordButton">Start Recording</button>
+  <button id="playButton">playButton</button>
+  <button id="downloadButton">downloadButton</button>
+  </div>
+</div> -->
+
+<div class="item">
+<span> video </span>
+<video id="video" width="320" height="240" autoplay="autoplay" ></video>
+</div>
+<div class="item">
+<span> canvas </span>
+<canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+</div>
+<video id="imageee" width="320" height="240" autoplay="autoplay" ></video>
+<input id="button" type="button" value="Жми!" />
