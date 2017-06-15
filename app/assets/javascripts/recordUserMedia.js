@@ -82,7 +82,8 @@ $(document).ready(function() {
     }
     try {
       if (!localSteem)
-        return console.error('localSteem not found');
+        toastr.warning('localSteem not found')
+        return
       mediaRecorder = new MediaRecorder(localSteem, options);
     } catch (e) {
       console.error('Exception while creating MediaRecorder: ' + e);
@@ -107,42 +108,34 @@ $(document).ready(function() {
   }
 
   function play() {
-    // var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
+    var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
 
-  var video = recordedVideo
-  var mediaSource = new MediaSource;
-  video.src = URL.createObjectURL(mediaSource);
-  mediaSource.addEventListener('sourceopen', sourceOpen)
-
-  var file = new File("http://localhost:3000/source/test.mp4");
-  debugger
-  function sourceOpen () {
-    var mediaSource = this;
-    var sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
-    sourceBuffer.addEventListener('updateend', function () {
-      mediaSource.endOfStream();
-      video.play();
-    });
-    sourceBuffer.appendBuffer(buf); // buf is the arraybuffer to store the video data
-  };
-
-
-    // recordedVideo.src = window.URL.createObjectURL(superBuffer);
+    recordedVideo.src = window.URL.createObjectURL(superBuffer);
   }
 
   function download() {
     var blob = new Blob(recordedBlobs, {type: 'video/webm'});
-    var url = window.URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = 'test.webm';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function() {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }, 100);
+    // var url = window.URL.createObjectURL(blob);
+    // var a = document.createElement('a');
+    // a.style.display = 'none';
+    // a.href = url;
+    // a.download = 'test.webm';
+    // a.click();
+
+    var formData = new FormData
+    formData.append("blob", blob);
+
+    $.ajax({
+      url: '/video',
+      method: 'POST',
+      dataType: 'json',
+      data: formData,
+      cache: false,
+      processData: false,
+      contentType: false
+    }).done(function(data) {
+      console.log('url:', data.file_url);
+    });
   }
 
 

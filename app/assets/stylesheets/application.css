@@ -29,7 +29,11 @@ button {
 #actions{
   margin: 20px;
 }
-
+#record-actions{
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid red;
+}
 video{
   display: block;
 }

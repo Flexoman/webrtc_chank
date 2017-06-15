@@ -46,7 +46,6 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
 window.URL.createObjectURL = window.URL.createObjectURL || window.URL.webkitCreateObjectURL || window.URL.mozCreateObjectURL || window.URL.msCreateObjectURL;
 
 // запрашиваем разрешение на доступ к поточному видео камеры
-alert(navigator.getUserMedia)
 navigator.getUserMedia({video: true}, function (stream) {
   // получаем url поточного видео
   videoStreamUrl = window.URL.createObjectURL(stream);

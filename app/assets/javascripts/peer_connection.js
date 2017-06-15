@@ -2,6 +2,8 @@
 var userid = userid || getToken();
 var peers = {};
 
+var participant;
+
 var selfView,
     remoteView;
 
@@ -27,10 +29,14 @@ $(document).ready(function() {
     callButton.onclick = function(){ start() }
     call2Button.onclick = function(){ start2() }
     connectButton.onclick = function(){ connect() }
+    disconnectButton.onclick = function(){ disconnect() }
 })
 
 function connect(){
   var channel_id = document.getElementById('channel_val').value;
+
+  connectButton.disabled = true
+  disconnectButton.disabled = false
 
   SignalServer = App.cable.subscriptions.create({ channel: "WebrtcSignalServer", channel_id: channel_id },{
       connected: function() {
@@ -50,6 +56,15 @@ function connect(){
       }
   })
 
+}
+
+function disconnect() {
+  App.cable.subscriptions.remove(SignalServer)
+    disconnectButton.disabled = true
+       connectButton.disabled = false
+          callButton.disabled = true
+         call2Button.disabled = true
+  closePeerConnections()
 }
 
 function open_local_steem() {
@@ -134,6 +149,10 @@ function onmessage(data) {
       callButton.disabled = true
       start();
     }
+
+    if (data.userid != userid)
+      participant = data.userid;
+
     if (data.desc) {
         var desc = data.desc;
 
@@ -142,6 +161,7 @@ function onmessage(data) {
 
             pc.setRemoteDescription(desc)
               .then(function () {
+
                 console.log('createAnswer')
                 return pc.createAnswer();
               })
@@ -163,7 +183,7 @@ function onmessage(data) {
         } else {
             console.warn("Unsupported SDP type. Your code may differ here.");
         }
-    } else{
+    } else if (data.candidate){
         pc.addIceCandidate(data.candidate)
           .catch(logError);
     }
@@ -171,9 +191,10 @@ function onmessage(data) {
 
 function closePeerConnections() {
     self.stopBroadcasting = true;
-    if (localSteem) localSteem.stop();
 
-    for (var userid in peers) {
+    if (localSteem) localVideo.srcObject = null
+
+    for (userid in peers) {
         peers[userid].peer.close();
     }
     peers = {};
