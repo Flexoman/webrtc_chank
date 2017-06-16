@@ -17,7 +17,7 @@
 //= require cable
 
 //include adapter for srcObject shim
-// require adapter-latest
+//= require adapter-latest
 // require peer_connection
 // require recordUserMedia
 // require save

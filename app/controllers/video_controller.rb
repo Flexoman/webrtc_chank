@@ -1,8 +1,7 @@
 class VideoController < ApplicationController
 
   def index
-    @files = Dir.open(Rails.root+"public/videos")
-                .entries
+    @files = dir.entries
                 .select{ |g| g.include?('.webm') }
   end
 
@@ -17,5 +16,17 @@ class VideoController < ApplicationController
 
     render json: { file_url:  path }
   end
+
+  private
+
+    def dir
+      path = Rails.root + "public/videos"
+      if Dir[path].present?
+        Dir.open(path)
+      else
+        FileUtils.mkdir_p(path)
+        Dir.open(path)
+      end
+    end
 
 end
