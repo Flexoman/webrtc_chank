@@ -25,18 +25,18 @@ $(document).ready(function() {
     alert('getUserMedia() must be run from a secure origin: HTTPS or localhost.' +
       '\n\nChanging protocol to HTTPS');
     location.protocol = 'HTTPS';
-  }
+  };
 
 
   function handleError(error) {
     console.log('navigator.getUserMedia error: ', error);
-  }
+  };
 
   function handleSourceOpen(event) {
     console.log('MediaSource opened');
     sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
     console.log('Source buffer: ', sourceBuffer);
-  }
+  };
 
   recordedVideo.addEventListener('error', function(ev) {
     console.error('MediaRecording.recordedMedia.error()');
@@ -81,16 +81,17 @@ $(document).ready(function() {
       }
     }
     try {
-      if (!localSteem)
+      if (!localSteem){
         toastr.warning('localSteem not found')
         return
+      };
       mediaRecorder = new MediaRecorder(localSteem, options);
     } catch (e) {
       console.error('Exception while creating MediaRecorder: ' + e);
       alert('Exception while creating MediaRecorder: '
         + e + '. mimeType: ' + options.mimeType);
       return;
-    }
+    };
     console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
     recordButton.textContent = 'Stop Recording';
     playButton.disabled = true;
@@ -105,13 +106,13 @@ $(document).ready(function() {
     mediaRecorder.stop();
     console.log('Recorded Blobs: ', recordedBlobs);
     recordedVideo.controls = true;
-  }
+  };
 
   function play() {
     var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
 
     recordedVideo.src = window.URL.createObjectURL(superBuffer);
-  }
+  };
 
   function download() {
     var blob = new Blob(recordedBlobs, {type: 'video/webm'});
@@ -136,7 +137,7 @@ $(document).ready(function() {
     }).done(function(data) {
       console.log('url:', data.file_url);
     });
-  }
+  };
 
 
 })
