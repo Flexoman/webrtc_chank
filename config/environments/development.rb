@@ -49,7 +49,7 @@ Rails.application.configure do
   original_formatter = Logger::Formatter.new
 
   config.log_formatter = proc do |severity, datetime, progname, msg|
-    message = msg.first(5)
+    message = msg.first(100)
     original_formatter.call(severity, datetime, progname, message)
   end
   # Raises error for missing translations

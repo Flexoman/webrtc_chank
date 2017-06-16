@@ -167,6 +167,7 @@ function onmessage(data) {
               })
               .then(function (answer) {
                   console.log('answer',answer)
+                  peers[desc.userid]
                   return pc.setLocalDescription(answer);
               })
               .then(function () {
@@ -192,8 +193,9 @@ function onmessage(data) {
 function closePeerConnections() {
     self.stopBroadcasting = true;
 
-    if (localSteem) localVideo.srcObject = null
+    pc.close()
 
+    if (localSteem) localVideo.srcObject = null
     for (userid in peers) {
         peers[userid].peer.close();
     }
