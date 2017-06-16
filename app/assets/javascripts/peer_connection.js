@@ -1,4 +1,5 @@
 'use strict';
+
 var userid = userid || getToken();
 var peers = {};
 
@@ -10,7 +11,7 @@ var selfView,
 var callButton,
     call2Button,
     connectButton,
-    disconnectButton
+    disconnectButton;
 
 var SignalServer,
     localSteem;
@@ -26,17 +27,17 @@ $(document).ready(function() {
     connectButton = document.getElementById('connectButton');
     disconnectButton = document.getElementById('disconnectButton');
 
-    callButton.onclick = function(){ start() }
-    call2Button.onclick = function(){ start2() }
-    connectButton.onclick = function(){ connect() }
-    disconnectButton.onclick = function(){ disconnect() }
-})
+    callButton.onclick = function(){ start() };
+    call2Button.onclick = function(){ start2() };
+    connectButton.onclick = function(){ connect() };
+    disconnectButton.onclick = function(){ disconnect() };
+});
 
 function connect(){
   var channel_id = document.getElementById('channel_val').value;
 
-  connectButton.disabled = true
-  disconnectButton.disabled = false
+  connectButton.disabled = true;
+  disconnectButton.disabled = false;
 
   SignalServer = App.cable.subscriptions.create({ channel: "WebrtcSignalServer", channel_id: channel_id },{
       connected: function() {
@@ -51,21 +52,21 @@ function connect(){
         // console.log(data)
         onmessage(data)
       },
-      signal: function(data = {}) {
+      signal: function(data) {
         return this.perform('signal', data );
       }
-  })
+  });
 
-}
+};
 
 function disconnect() {
-  App.cable.subscriptions.remove(SignalServer)
-    disconnectButton.disabled = true
-       connectButton.disabled = false
-          callButton.disabled = true
-         call2Button.disabled = true
-  closePeerConnections()
-}
+  App.cable.subscriptions.remove(SignalServer);
+    disconnectButton.disabled = true;
+       connectButton.disabled = false;
+          callButton.disabled = true;
+         call2Button.disabled = true;
+  closePeerConnections();
+};
 
 function open_local_steem() {
   // get a local stream, show it in a self-view and add it to be sent
@@ -76,7 +77,7 @@ function open_local_steem() {
               localSteem = stream;
               // console.log(stream.getVideoTracks()[0])
            }).catch(logError);
-}
+};
 
 var ICE_config = {
   'iceServers': [
@@ -134,8 +135,9 @@ function startConnect(pc) {
     // once remote track arrives, show it in the remote video element
     pc.ontrack = function (evt) {
         // don't set srcObject again if it is already set.
-        if (!remoteView.srcObject)
+        if (!remoteView.srcObject){
           remoteView.srcObject = evt.streams[0];
+        }
         console.log(evt.streams)
     };
 
@@ -148,10 +150,11 @@ function onmessage(data) {
     if (!pc) {
       callButton.disabled = true
       start();
-    }
+    };
 
-    if (data.userid != userid)
+    if (data.userid != userid){
       participant = data.userid;
+    };
 
     if (data.desc) {
         var desc = data.desc;
@@ -195,20 +198,21 @@ function closePeerConnections() {
 
     pc.close()
 
-    if (localSteem) localVideo.srcObject = null
+    if (localSteem){ localVideo.srcObject = null}
+
     for (userid in peers) {
         peers[userid].peer.close();
     }
     peers = {};
-}
+};
 
 function getToken() {
     return Math.round(Math.random() * 9999999999) + 9999999999;
-}
+};
 
 function logError(error) {
     // console.error(error.name + ": " + error.message);
     // console.error(error);
     toastr.error(error.name + ": " + error.message)
     // console.error(error);
-}
+};
